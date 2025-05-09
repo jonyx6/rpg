@@ -1,0 +1,162 @@
+class Personaje {
+    constructor(x, y, app) {
+        this.x = x;
+        this.y = y;
+        this.app = app;
+        this.animaciones = {};
+        this.sprite = null;
+        this.listo = false;
+        //this.teclas = {}; // innecesario si no usamos teclado
+        //this.detectarDeteclas(); // innecesario si no usamos teclado
+        this.velocidad = 1;
+        this.destinoX = null;
+        this.destinoY = null;
+    }
+
+   /* detectarDeteclas() {
+        // ← innecesario para control con mouse
+        window.addEventListener('keydown', (event) => {
+            this.guardarTecla_Apretada(event);
+        });
+        window.addEventListener('keyup', (event) => {
+            this.guardarTecla_Levantada(event);
+        });
+    }*/
+
+    guardarTecla_Apretada(unaTecla) {
+        this.teclas[unaTecla.key.toLowerCase()] = true;
+    }
+
+    guardarTecla_Levantada(unaTecla) {
+        this.teclas[unaTecla.key.toLowerCase()] = false;
+    }
+
+    getPositionY() {
+        return this.y;
+    }
+
+    getPositionX() {
+        return this.x;
+    }
+
+    setPositionx(unValor) {
+        this.x = unValor;
+        if (this.sprite) this.sprite.x = this.x;
+    }
+
+    async cargarSpritesAnimados() {
+        let json = await PIXI.Assets.load('parado/idle.json');
+        this.animaciones['idle'] = json.animations["idle"];
+        this.sprite = new PIXI.AnimatedSprite(this.animaciones['idle']); //cargo la animacion
+        this.sprite.anchor.set(0.5, 1);
+        this.sprite.animationSpeed = 0.1;
+        this.sprite.loop = true;
+        this.sprite.x = this.x;
+        this.sprite.y = this.y;
+        this.sprite.play();
+        this.listo = true;
+    }
+
+    cambiarAnimacion(nombre, haciaIzquierda = false) {
+        if (this.animaciones[nombre]) {
+            this.sprite.textures = this.animaciones[nombre];
+            this.sprite.play();
+
+            if (haciaIzquierda) {
+                this.sprite.scale.x = -1;
+                this.sprite.anchor.x = 1;
+            } else {
+                this.sprite.scale.x = 1;
+                this.sprite.anchor.x = 0.5;
+            }
+        }
+    }
+
+    moverALaDerecha(unValor) {
+        this.x += unValor;
+        if (this.sprite) {
+            this.sprite.x = this.x;
+        }
+    }
+
+    moverALaIzquieda(unValor) {
+        this.x -= unValor;
+        if (this.sprite) {
+            this.sprite.x = this.x;
+        }
+    }
+
+    moverAbajo(unValor) {
+        this.y += unValor;
+        if (this.sprite) {
+            this.sprite.y = this.y;
+        }
+    }
+
+    moverArriba(unValor) {
+        this.y -= unValor;
+        if (this.sprite) {
+            this.sprite.y = this.y;
+        }
+    }
+
+    moverA(destX, destY) {
+        this.destinoX = destX;
+        this.destinoY = destY;
+    }
+
+    seleccionar() {
+        // Podés mostrar un borde, sombra, o simplemente marcarlo como seleccionado
+        console.log("Personaje seleccionado");
+        this.sprite.tint = 0x00ff00; // Lo tiñe de verde al seleccionarlo
+    }
+    
+    deseleccionar() {
+    this.sprite.tint = 0xFFFFFF; // Color original (sin tinte)
+    }
+    
+    moverA(destX, destY) {
+        // Movimiento directo hacia la posición (se puede mejorar con interpolación después)
+        this.setPositionx(destX);
+        this.y = destY;
+        this.sprite.y = destY;
+    }
+    
+
+    update() {
+
+
+        if (this.destinoX !== null && this.destinoY !== null) {
+             const dx = this.destinoX - this.x;
+             const dy = this.destinoY - this.y;
+             const distancia = Math.sqrt(dx * dx + dy * dy);
+            
+        if (distancia > 1) {
+            const dirX = dx / distancia;
+            const dirY = dy / distancia;
+            this.x += dirX * this.velocidad;
+            this.y += dirY * this.velocidad;
+            if (this.sprite) {
+                this.sprite.x = this.x;
+                this.sprite.y = this.y;
+            }
+            } else {
+                        // Llegó al destino
+                        this.x = this.destinoX;
+                        this.y = this.destinoY;
+                        this.destinoX = null;
+                        this.destinoY = null;
+                    }
+            }
+            
+                // Podés mantener o comentar el control por teclado si querés:
+                /*
+                if(this.teclas["d"]){ this.moverALaDerecha(this.velocidad); }
+                else if(this.teclas["s"]){ this.moverAbajo(this.velocidad); }
+                else if(this.teclas["w"]){ this.moverArriba(this.velocidad); }
+                else if(this.teclas["a"]){ this.moverALaIzquieda(this.velocidad); }
+                */
+            
+            
+    }
+}

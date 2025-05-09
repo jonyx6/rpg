@@ -1,0 +1,40 @@
+{
+  "meta": {
+    "version": "0.6.7"
+  },
+  "savePath": "C:\\Users\\Jonathan\\Downloads\\The Male adventurer - Free\\The Male adventurer - Free\\Idle\\parado",
+  "images": [],
+  "folders": [
+    "C:/Users/Jonathan/Downloads/The Male adventurer - Free/The Male adventurer - Free/Idle/idleDown",
+    "C:/Users/Jonathan/Downloads/The Male adventurer - Free/The Male adventurer - Free/Idle/idleRightUp",
+    "C:/Users/Jonathan/Downloads/The Male adventurer - Free/The Male adventurer - Free/Idle/idleUp",
+    "C:/Users/Jonathan/Downloads/The Male adventurer - Free/The Male adventurer - Free/Idle/parado"
+  ],
+  "packOptions": {
+    "textureName": "idle",
+    "textureFormat": "png",
+    "removeFileExtension": false,
+    "prependFolderName": true,
+    "base64Export": false,
+    "tinify": false,
+    "tinifyKey": "",
+    "scale": 1,
+    "filter": "none",
+    "exporter": "JSON (hash)",
+    "fileName": "pack-result",
+    "savePath": "C:\\Users\\Jonathan\\Downloads\\The Male adventurer - Free\\The Male adventurer - Free\\Idle\\parado",
+    "width": 2048,
+    "height": 2048,
+    "fixedSize": false,
+    "powerOfTwo": false,
+    "padding": 0,
+    "extrude": 0,
+    "allowRotation": true,
+    "allowTrim": true,
+    "trimMode": "trim",
+    "alphaThreshold": "0",
+    "detectIdentical": true,
+    "packer": "MaxRectsBin",
+    "packerMethod": "BestShortSideFit"
+  }
+}
