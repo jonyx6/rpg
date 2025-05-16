@@ -1,27 +1,30 @@
 class Personaje {
-    constructor(x, y, app) {
+    constructor(x, y, app,juego) {
+        this.juego = juego;
         this.x = x;
         this.y = y;
         this.app = app;
         this.animaciones = {};
         this.sprite = null;
+        this.destino = null; //le da un destino a donde ir
         this.listo = false;
         //this.teclas = {}; // innecesario si no usamos teclado
         //this.detectarDeteclas(); // innecesario si no usamos teclado
-        this.velocidad = 1;
+        this.velocidad = 1 ;
+        this.direccion =  { x : 0 , y : 0} ;
         this.destinoX = null;
         this.destinoY = null;
+        this.crearContainer();
+        
     }
 
-   /* detectarDeteclas() {
-        // ← innecesario para control con mouse
-        window.addEventListener('keydown', (event) => {
-            this.guardarTecla_Apretada(event);
-        });
-        window.addEventListener('keyup', (event) => {
-            this.guardarTecla_Levantada(event);
-        });
-    }*/
+    crearContainer() {
+        this.container = new PIXI.Container();   
+        
+        this.juego.escena.addChild(this.container)
+    }
+
+ 
 
     guardarTecla_Apretada(unaTecla) {
         this.teclas[unaTecla.key.toLowerCase()] = true;
@@ -55,6 +58,7 @@ class Personaje {
         this.sprite.y = this.y;
         this.sprite.play();
         this.listo = true;
+        this.container.addChild(this.sprite)
     }
 
     cambiarAnimacion(nombre, haciaIzquierda = false) {
@@ -101,8 +105,8 @@ class Personaje {
     }
 
     moverA(destX, destY) {
-        this.destinoX = destX;
-        this.destinoY = destY;
+    this.destinoX = destX;
+    this.destinoY = destY;
     }
 
     seleccionar() {
@@ -115,48 +119,34 @@ class Personaje {
     this.sprite.tint = 0xFFFFFF; // Color original (sin tinte)
     }
     
-    moverA(destX, destY) {
-        // Movimiento directo hacia la posición (se puede mejorar con interpolación después)
-        this.setPositionx(destX);
-        this.y = destY;
-        this.sprite.y = destY;
-    }
-    
-
-    update() {
 
 
-        if (this.destinoX !== null && this.destinoY !== null) {
-             const dx = this.destinoX - this.x;
-             const dy = this.destinoY - this.y;
-             const distancia = Math.sqrt(dx * dx + dy * dy);
-            
+   update() {
+    if (this.destinoX !== null && this.destinoY !== null) {
+        const dx = this.destinoX - this.x;
+        const dy = this.destinoY - this.y;
+        const distancia = Math.sqrt(dx * dx + dy * dy);
+
         if (distancia > 1) {
             const dirX = dx / distancia;
             const dirY = dy / distancia;
             this.x += dirX * this.velocidad;
             this.y += dirY * this.velocidad;
+
             if (this.sprite) {
                 this.sprite.x = this.x;
                 this.sprite.y = this.y;
             }
-            } else {
-                        // Llegó al destino
-                        this.x = this.destinoX;
-                        this.y = this.destinoY;
-                        this.destinoX = null;
-                        this.destinoY = null;
-                    }
-            }
-            
-                // Podés mantener o comentar el control por teclado si querés:
-                /*
-                if(this.teclas["d"]){ this.moverALaDerecha(this.velocidad); }
-                else if(this.teclas["s"]){ this.moverAbajo(this.velocidad); }
-                else if(this.teclas["w"]){ this.moverArriba(this.velocidad); }
-                else if(this.teclas["a"]){ this.moverALaIzquieda(this.velocidad); }
-                */
-            
-            
+        } else {
+            // Llegó al destino
+            this.x = this.destinoX;
+            this.y = this.destinoY;
+            this.destinoX = null;
+            this.destinoY = null;
+        }
     }
+
+
+}
+
 }

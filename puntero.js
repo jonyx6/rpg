@@ -3,6 +3,7 @@ class Puntero {
         this.app = app;
         this.juego = juego;
         this.personajesSeleccionados = [];
+        this.objetoSeleccionados=[];
         this.iniciarEventos();
     }
 
@@ -19,7 +20,7 @@ class Puntero {
     detectarClicEnPersonaje(evento) {
         const posicion = evento.global;
     
-        if (this.juego && this.juego.personajes) {
+        if (this.juego && this.juego.personajes || this.juego.objetosDeEscenario) {
 
             this.deseleccionarPersonajes()
             const personajeClickeado = this.juego.personajes.find(p => {
@@ -28,13 +29,29 @@ class Puntero {
                     this.estaDentroDelSprite(posicion,areaDelSprite)
                 );
             });
+
+            const objetoClickeado = this.juego.objetosDeEscenario.find(o => {
+            const areaDelSpriteDelObjeto = o.sprite.getBounds();
+                return (
+                    this.estaDentroDelSprite(posicion,areaDelSpriteDelObjeto)
+                );
+            });
     
-            if (personajeClickeado) {
+            if (personajeClickeado ) {
                 this.personajesSeleccionados = [personajeClickeado];
+                
                 personajeClickeado.seleccionar();
-            } else {
+                
+            } else if (objetoClickeado){
+
+                this.objetoSeleccionados =[objetoClickeado]
+
+                objetoClickeado.seleccionar();
+            }else{
                  //this.ordenarMover(posicion); 
             }
+
+
         } else {
             console.error("No se encontraron personajes en juego.");
         }
@@ -53,8 +70,11 @@ class Puntero {
 
 
     deseleccionarPersonajes() {
-        if (this.personajesSeleccionados && this.personajesSeleccionados.length > 0) {
+        if (this.personajesSeleccionados && this.personajesSeleccionados.length > 0 ) {
             this.personajesSeleccionados.forEach(p => p.deseleccionar());
+            this.objetoSeleccionados.forEach(o => o.deseleccionar())
+        }else if(this.objetoSeleccionados && this.objetoSeleccionados > 0){
+            this.objetoSeleccionados.forEach(o => o.deseleccionar())
         }
     }
     
@@ -65,12 +85,14 @@ class Puntero {
     }
 
     detectarClicDerecho(evento) {
+        
     // Verificamos si el clic fue derecho (botón 2 del ratón).
         if (evento.data.originalEvent.button === 2) { // button 2 es el clic derecho
          const posicion = evento.global;
         // Aquí llamamos a ordenarMover sin necesidad de hacer nada con personajes.
             this.ordenarMover(posicion);
         }
+        
     }
 
 
