@@ -1,10 +1,10 @@
-class CaballeroRojo extends Personaje {
+class Trabajador extends Personaje {
     constructor(nombre,x, y, app,juego,puntosDeAtaque,puntosDeDefensa,faccion){
         super(nombre,x, y, app,juego,puntosDeAtaque,puntosDeDefensa,faccion);
     }
 
     async cargarSpritesAnimados() {
-        let json = await PIXI.Assets.load('caballero/texture.json');
+        let json = await PIXI.Assets.load('peoncaminando/texture.json');
         this.animaciones['idle'] = json.animations["idle"];
         this.sprite = new PIXI.AnimatedSprite(this.animaciones['idle']); //cargo la animacion
         this.sprite.anchor.set(0.5, 1);

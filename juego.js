@@ -22,7 +22,7 @@ class Juego {
 
         this.iniciarEscena();
 
-        this.app.stage.sortableChildren = true;
+        
         this.app.ticker.add(() => this.gameLoop());
     }
 
@@ -30,8 +30,11 @@ class Juego {
         this.cargarEscena();
         await this.ponerFondo();
         this.cargarJugador(4);
-        this.cargarArbol(78);
+        this.cargarPeon(9);
+        this.cargarArbol(50);
         this.cargarPuntero();
+        this.cargarCaballeroRojo(3);
+        this.app.stage.sortableChildren = true;
     }
 
     cargarPuntero(){
@@ -47,10 +50,34 @@ class Juego {
     async cargarJugador(cantidad) {
         const promesas = [];
         for (let i = 0; i < cantidad; i++) {
-            const ashe = new Personaje(Math.random() * (this.ancho - 100), Math.random() * (this.alto - 100), this.app,this);
+            const ashe = new Personaje("ashe",Math.random() * (this.ancho - 100), Math.random() * (this.alto - 100), this.app,this,15,5,"humana");
             promesas.push(ashe.cargarSpritesAnimados().then(() => {
                 this.escena.addChild(ashe.container);
                 this.personajes.push(ashe);
+            }));
+        }
+        await Promise.all(promesas);
+    }
+
+    async cargarPeon(cantidad){
+        const promesas =[];
+        for ( let i = 0 ; i<cantidad;i++){
+            const peon = new Trabajador("trabajador",Math.random()*(this.ancho - 100),Math.random() * (this.alto -100),this.app,this,20,10,"orco");
+            promesas.push(peon.cargarSpritesAnimados().then(()=> {
+                this.escena.addChild(peon.container);
+                this.personajes.push(peon)
+            }));
+        }
+        await Promise.all(promesas);
+    }
+
+    async cargarCaballeroRojo(cantidad){
+        const promesa = [];
+        for( let i = 0; i< cantidad;i++){
+            const caballero =  new CaballeroRojo("caballero rojo",Math.random()*(this.ancho - 100),Math.random() * (this.alto -100),this.app,this,20,10,"humana")
+            promesa.push(caballero.cargarSpritesAnimados().then(()=>{
+                this.escena.addChild(caballero.container);
+                this.personajes.push(caballero)
             }));
         }
         await Promise.all(promesas);

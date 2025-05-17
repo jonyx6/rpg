@@ -1,12 +1,16 @@
 class Personaje {
-    constructor(x, y, app,juego) {
-        this.juego = juego;
+    constructor(nombre,x, y, app,juego,puntosDeAtaque,puntosDeDefensa,faccion) {
+        this.nombre= nombre;
         this.x = x;
         this.y = y;
         this.app = app;
+        this.juego = juego;
+        this.puntosDeAtaque = puntosDeAtaque;
+        this.puntosDeDefensa= puntosDeDefensa;
+        this.faccion = faccion;
+        this.vida = 100;
         this.animaciones = {};
         this.sprite = null;
-        this.destino = null; //le da un destino a donde ir
         this.listo = false;
         //this.teclas = {}; // innecesario si no usamos teclado
         //this.detectarDeteclas(); // innecesario si no usamos teclado
@@ -86,7 +90,7 @@ class Personaje {
     moverALaIzquieda(unValor) {
         this.x -= unValor;
         if (this.sprite) {
-            this.sprite.x = this.x;
+            this.sprite.x = this.x ;
         }
     }
 

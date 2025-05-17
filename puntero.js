@@ -4,6 +4,10 @@ class Puntero {
         this.juego = juego;
         this.personajesSeleccionados = [];
         this.objetoSeleccionados=[];
+        this.rectanguloSeleccion = new PIXI.Graphics();
+        this.app.stage.addChild(this.rectanguloSeleccion);
+        this.iniciandoSeleccion = false;
+        this.puntoInicioSeleccion = null;
         this.iniciarEventos();
     }
 
@@ -13,7 +17,11 @@ class Puntero {
         this.app.stage.eventMode = 'static'; // le decis al stage que escuche eventos.
         this.app.stage.on('pointerdown', this.detectarClicEnPersonaje.bind(this));
 
-          // Detectar clic derecho.
+        this.app.stage.on('pointerdown', this.iniciarSeleccion.bind(this));
+        this.app.stage.on('pointermove', this.actualizarRectanguloSeleccion.bind(this));
+        this.app.stage.on('pointerup', this.finalizarSeleccion.bind(this));
+        
+        // Detectar clic derecho.
         this.app.stage.on('pointerdown', this.detectarClicDerecho.bind(this));
     }
 
@@ -47,8 +55,6 @@ class Puntero {
                 this.objetoSeleccionados =[objetoClickeado]
 
                 objetoClickeado.seleccionar();
-            }else{
-                 //this.ordenarMover(posicion); 
             }
 
 
@@ -79,8 +85,20 @@ class Puntero {
     }
     
     ordenarMover(posicion) {
-        for (let p of this.personajesSeleccionados) {
-            p.moverA(posicion.x, posicion.y); // Método que deberás definir
+        const cantidad = this.personajesSeleccionados.length;
+        const radio = 30; // distancia del centro
+
+        for (let i = 0; i < cantidad; i++) {
+            const angulo = (2 * Math.PI * i) / cantidad;
+            const offsetX = Math.cos(angulo) * radio;
+            const offsetY = Math.sin(angulo) * radio;
+
+            const destino = {
+                x: posicion.x + offsetX,
+                y: posicion.y + offsetY,
+            };
+
+            this.personajesSeleccionados[i].moverA(destino.x, destino.y);
         }
     }
 
@@ -93,6 +111,72 @@ class Puntero {
             this.ordenarMover(posicion);
         }
         
+    }
+
+    iniciarSeleccion(evento) {
+    // Solo si es clic izquierdo
+    if (evento.data.originalEvent.button !== 0) return;
+
+        this.iniciandoSeleccion = true;
+        this.puntoInicioSeleccion = evento.global.clone();
+        this.rectanguloSeleccion.clear();
+    }
+
+    actualizarRectanguloSeleccion(evento) {
+        if (!this.iniciandoSeleccion) return;
+
+        const actual = evento.global;
+        const inicio = this.puntoInicioSeleccion;
+
+        const x = Math.min(inicio.x, actual.x);
+        const y = Math.min(inicio.y, actual.y);
+        const width = Math.abs(inicio.x - actual.x);
+        const height = Math.abs(inicio.y - actual.y);
+
+        this.rectanguloSeleccion.clear();
+        this.rectanguloSeleccion.lineStyle(1, 0x00ff00);
+        this.rectanguloSeleccion.beginFill(0x00ff00, 0.1);
+        this.rectanguloSeleccion.drawRect(x, y, width, height);
+        this.rectanguloSeleccion.endFill();
+    }
+
+   finalizarSeleccion(evento) {
+        if (!this.iniciandoSeleccion) return;
+            this.iniciandoSeleccion = false;
+            this.rectanguloSeleccion.clear();
+
+            const actual = evento.global;
+            const inicio = this.puntoInicioSeleccion;
+
+            const deltaX = Math.abs(actual.x - inicio.x);
+            const deltaY = Math.abs(actual.y - inicio.y);
+
+            const umbralArrastre = 5; // Si se mueve menos de 5px, lo consideramos un clic
+
+        if (deltaX < umbralArrastre && deltaY < umbralArrastre) {
+        // Es un clic, no hacemos selección múltiple.
+            return;
+        }
+
+       // Arrastre válido: continuar con selección múltiple.
+            const x = Math.min(inicio.x, actual.x);
+            const y = Math.min(inicio.y, actual.y);
+            const width = Math.abs(inicio.x - actual.x);
+            const height = Math.abs(inicio.y - actual.y);
+            const rectSeleccion = new PIXI.Rectangle(x, y, width, height);
+
+            this.deseleccionarPersonajes();
+            this.personajesSeleccionados = [];
+
+            if (this.juego && this.juego.personajes) {
+                for (let p of this.juego.personajes) {
+                    const bounds = p.sprite.getBounds();
+                    if (rectSeleccion.contains(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2)) {
+                     this.personajesSeleccionados.push(p);
+                     p.seleccionar();
+                    }
+                }
+            }
     }
 
 
