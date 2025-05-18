@@ -4,11 +4,17 @@ class Puntero {
         this.juego = juego;
         this.personajesSeleccionados = [];
         this.objetoSeleccionados=[];
+        this.dibujarTriangualoDeSeleccion();
+        this.iniciarEventos();
+    }
+
+
+    dibujarTriangualoDeSeleccion(){
         this.rectanguloSeleccion = new PIXI.Graphics();
         this.app.stage.addChild(this.rectanguloSeleccion);
         this.iniciandoSeleccion = false;
         this.puntoInicioSeleccion = null;
-        this.iniciarEventos();
+
     }
 
     iniciarEventos() {
@@ -73,17 +79,17 @@ class Puntero {
         );
     }
 
-
-
     deseleccionarPersonajes() {
-        if (this.personajesSeleccionados && this.personajesSeleccionados.length > 0 ) {
-            this.personajesSeleccionados.forEach(p => p.deseleccionar());
-            this.objetoSeleccionados.forEach(o => o.deseleccionar())
-        }else if(this.objetoSeleccionados && this.objetoSeleccionados > 0){
-            this.objetoSeleccionados.forEach(o => o.deseleccionar())
+        if (this.personajesSeleccionados && this.personajesSeleccionados.length > 0) {
+             this.personajesSeleccionados.forEach(p => p.deseleccionar());
+            
+        }
+
+        if (this.objetoSeleccionados && this.objetoSeleccionados.length > 0) {
+            this.objetoSeleccionados.forEach(o => o.deseleccionar());
         }
     }
-    
+
     ordenarMover(posicion) {
         const cantidad = this.personajesSeleccionados.length;
         const radio = 30; // distancia del centro

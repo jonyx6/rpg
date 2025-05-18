@@ -3,6 +3,7 @@ class CaballeroRojo extends Personaje {
         super(nombre,x, y, app,juego,puntosDeAtaque,puntosDeDefensa,faccion);
     }
 
+
     async cargarSpritesAnimados() {
         let json = await PIXI.Assets.load('caballero/texture.json');
         this.animaciones['idle'] = json.animations["idle"];
@@ -10,8 +11,8 @@ class CaballeroRojo extends Personaje {
         this.sprite.anchor.set(0.5, 1);
         this.sprite.animationSpeed = 0.1;
         this.sprite.loop = true;
-        this.sprite.x = this.x;
-        this.sprite.y = this.y;
+        this.sprite.x = 0;  
+        this.sprite.y = 0;
         this.sprite.play();
         this.listo = true;
         this.container.addChild(this.sprite)

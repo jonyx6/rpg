@@ -23,9 +23,15 @@ class Personaje {
     }
 
     crearContainer() {
-        this.container = new PIXI.Container();   
-        
-        this.juego.escena.addChild(this.container)
+        this.container = new PIXI.Container();
+        this.container.x = this.x;
+        this.container.y = this.y;
+        this.juego.escena.addChild(this.container);
+    }
+
+    updateZIndex() {
+
+        this.container.zIndex = this.container.y;
     }
 
  
@@ -48,8 +54,9 @@ class Personaje {
 
     setPositionx(unValor) {
         this.x = unValor;
-        if (this.sprite) this.sprite.x = this.x;
+        this.container.x = this.x;
     }
+
 
     async cargarSpritesAnimados() {
         let json = await PIXI.Assets.load('parado/idle.json');
@@ -58,8 +65,8 @@ class Personaje {
         this.sprite.anchor.set(0.5, 1);
         this.sprite.animationSpeed = 0.1;
         this.sprite.loop = true;
-        this.sprite.x = this.x;
-        this.sprite.y = this.y;
+        this.sprite.x = 0;
+        this.sprite.y = 0;
         this.sprite.play();
         this.listo = true;
         this.container.addChild(this.sprite)
@@ -123,34 +130,32 @@ class Personaje {
     this.sprite.tint = 0xFFFFFF; // Color original (sin tinte)
     }
     
+    update() {
+        if (this.destinoX !== null && this.destinoY !== null) {
+            const dx = this.destinoX - this.x;
+            const dy = this.destinoY - this.y;
+            const distancia = Math.sqrt(dx * dx + dy * dy);
 
+            if (distancia > 1) {
+                const dirX = dx / distancia;
+                const dirY = dy / distancia;
+                this.x += dirX * this.velocidad;
+                this.y += dirY * this.velocidad;
 
-   update() {
-    if (this.destinoX !== null && this.destinoY !== null) {
-        const dx = this.destinoX - this.x;
-        const dy = this.destinoY - this.y;
-        const distancia = Math.sqrt(dx * dx + dy * dy);
-
-        if (distancia > 1) {
-            const dirX = dx / distancia;
-            const dirY = dy / distancia;
-            this.x += dirX * this.velocidad;
-            this.y += dirY * this.velocidad;
-
-            if (this.sprite) {
-                this.sprite.x = this.x;
-                this.sprite.y = this.y;
+                // Mover el container, no el sprite directamente
+                this.container.x = this.x;
+                this.container.y = this.y;
+            } else {
+                this.x = this.destinoX;
+                this.y = this.destinoY;
+                this.container.x = this.x;
+                this.container.y = this.y;
+                this.destinoX = null;
+                this.destinoY = null;
             }
-        } else {
-            // Llegó al destino
-            this.x = this.destinoX;
-            this.y = this.destinoY;
-            this.destinoX = null;
-            this.destinoY = null;
         }
     }
 
 
 }
 
-}

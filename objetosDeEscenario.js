@@ -1,4 +1,4 @@
-class objetosDeEscenario {
+class ObjetosDeEscenario {
     constructor(name,x,y,app,juego,imagenDir){
         this.juego = juego;
         this.x = x ;
@@ -8,15 +8,19 @@ class objetosDeEscenario {
         this.sprite = null;
         this.listo = false;
         this.animaciones = {};  
-        this.imagenDir = imagenDir
-        this.cargarSpritesAnimados(); 
+        this.imagenDir = imagenDir 
         this.crearContainer();
     }
 
     crearContainer() {
-        this.container = new PIXI.Container();   
-        
-        this.juego.escena.addChild(this.container)
+        this.container = new PIXI.Container();
+        this.container.x = this.x;
+        this.container.y = this.y;
+        this.juego.escena.addChild(this.container);
+    }
+
+    updateZIndex() {
+        this.container.zIndex = this.container.y;
     }
 
     async cargarSpritesAnimados() {
@@ -26,8 +30,8 @@ class objetosDeEscenario {
         this.sprite.anchor.set(0.5, 1);
         this.sprite.animationSpeed = 0.1;
         this.sprite.loop = true;
-        this.sprite.x = this.x;
-        this.sprite.y = this.y;
+        this.sprite.x = 0;
+        this.sprite.y = 0;
         this.sprite.play();
         this.listo = true;
         this.container.addChild(this.sprite)

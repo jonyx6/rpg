@@ -29,12 +29,12 @@ class Juego {
     async iniciarEscena() {
         this.cargarEscena();
         await this.ponerFondo();
-        this.cargarJugador(4);
         this.cargarPeon(9);
         this.cargarArbol(50);
         this.cargarPuntero();
         this.cargarCaballeroRojo(3);
         this.app.stage.sortableChildren = true;
+        this.escena.sortableChildren = true;
     }
 
     cargarPuntero(){
@@ -44,10 +44,11 @@ class Juego {
     cargarEscena() {
         this.escena = new PIXI.Container(); 
         this.escena.name = "juego";
+        this.escena.sortableChildren = true;
         this.app.stage.addChild(this.escena);
     }
 
-    async cargarJugador(cantidad) {
+    /*async cargarJugador(cantidad) {
         const promesas = [];
         for (let i = 0; i < cantidad; i++) {
             const ashe = new Personaje("ashe",Math.random() * (this.ancho - 100), Math.random() * (this.alto - 100), this.app,this,15,5,"humana");
@@ -57,7 +58,7 @@ class Juego {
             }));
         }
         await Promise.all(promesas);
-    }
+    }*/
 
     async cargarPeon(cantidad){
         const promesas =[];
@@ -72,10 +73,10 @@ class Juego {
     }
 
     async cargarCaballeroRojo(cantidad){
-        const promesa = [];
+        const promesas = [];
         for( let i = 0; i< cantidad;i++){
             const caballero =  new CaballeroRojo("caballero rojo",Math.random()*(this.ancho - 100),Math.random() * (this.alto -100),this.app,this,20,10,"humana")
-            promesa.push(caballero.cargarSpritesAnimados().then(()=>{
+            promesas.push(caballero.cargarSpritesAnimados().then(()=>{
                 this.escena.addChild(caballero.container);
                 this.personajes.push(caballero)
             }));
@@ -86,7 +87,7 @@ class Juego {
     async cargarArbol(cantidad) {
         const promesas = [];
         for (let i = 0; i < cantidad; i++) {
-            const arbol = new objetosDeEscenario("arbol",Math.random() * (this.ancho - 100), Math.random() * (this.alto - 100), this.app ,this);
+            const arbol = new ObjetosDeEscenario("arbol",Math.random() * (this.ancho - 100), Math.random() * (this.alto - 100), this.app ,this);
             promesas.push(arbol.cargarSpritesAnimados().then(() => {
                 this.escena.addChild(arbol.container);
                 this.objetosDeEscenario.push(arbol);
@@ -103,7 +104,9 @@ class Juego {
     }
 
     gameLoop() {
-       
+        this.personajes.forEach(p => {p.updateZIndex()})
+        this.objetosDeEscenario.forEach(o =>{o.updateZIndex()})
+        
         this.personajes.forEach(p => {p.update() })
         
     }
